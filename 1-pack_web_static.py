@@ -7,12 +7,13 @@ import os
 
 env.hosts = ['localhost']
 
+
 def do_pack():
     """
     Compresses the contents of the web_static folder into a .tgz archive.
 
     Returns:
-        (str): Archive path if the archive has been generated correctly, None otherwise.
+        (str): Archive path if generated correctly, None otherwise.
     """
     timestamp = time.strftime("%Y%m%d%H%M%S")
     archive_path = "versions/web_static_{}.tgz".format(timestamp)
