@@ -22,7 +22,7 @@ def do_pack():
         os.makedirs("versions")
 
     try:
-        local("tar -czvf {} web_static/".format(archive_path))
+        local("tar -czvf {} web_static/*".format(archive_path))
         return archive_path
     except Exception as e:
         return None
