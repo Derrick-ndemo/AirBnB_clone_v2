@@ -1,23 +1,46 @@
 #!/usr/bin/python3
 """
-Fabric script to genereate tgz archive
-execute: fab -f 1-pack_web_static.py do_pack
+Fabric script to deploy tgz archive
+fab -f 2-do_deploy_web_static.py do_deploy:archive_path=filepath
+    -i private-key -u user
 """
 
-from datetime import datetime
-from fabric.api import *
+from os.path import exists
+from fabric.api import put, run, env
+
+env.hosts = ['35.153.66.157', '54.90.15.228']
 
 
-def do_pack():
+def do_deploy(archive_path):
     """
-    making an archive on web_static folder
+    copies archive file from local to my webservers
     """
 
-    time = datetime.now()
-    archive = 'web_static_' + time.strftime("%Y%m%d%H%M%S") + '.' + 'tgz'
-    local('mkdir -p versions')
-    create = local('tar -cvzf versions/{} web_static'.format(archive))
-    if create is not None:
-        return archive
-    else:
-        return None
+    if not exists(archive_path):
+        return False
+    try:
+        file_name = archive_path.split("/")[-1].split(".")[0]
+        put(archive_path, "/tmp/")
+
+        run("mkdir -p /data/web_static/releases/{}".format(file_name))
+
+        run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}/"
+            .format(file_name, file_name))
+
+        run('rm -rf /tmp/{}.tgz'.format(file_name))
+
+        run(('mv /data/web_static/releases/{}/web_static/* ' +
+            '/data/web_static/releases/{}/')
+            .format(file_name, file_name))
+
+        run('rm -rf /data/web_static/releases/{}/web_static'
+            .format(file_name))
+
+        run('rm -rf /data/web_static/current')
+
+        run(('ln -s /data/web_static/releases/{}/' +
+            ' /data/web_static/current')
+            .format(file_name))
+        return True
+    except Exception:
+        return False
