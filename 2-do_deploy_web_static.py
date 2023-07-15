@@ -33,7 +33,7 @@ def do_deploy(archive_path):
         run('tar -xzf /tmp/{} -C {}{}'.format(archive_filename, releases_path, new_archive))
 
         # Move the contents of the archive to the proper location
-        run('mv {}{}/web_static/* {}{}'.format(releases_path, new_archive, releases_path, new_archive))
+        run('mv -f {}{}/web_static/ {}{}'.format(releases_path, new_archive, releases_path, new_archive))
 
         # Remove unnecessary directories
         run('rm -rf {}{}/web_static'.format(releases_path, new_archive))
