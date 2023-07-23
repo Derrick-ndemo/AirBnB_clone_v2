@@ -24,6 +24,7 @@ def c(text):
     return "C {}".format(text.replace("_", " "))
 
 
+@app.route('/python')
 @app.route('/python/<text>')
 def python(text):
     """ Returns a string at the route, expands the text variable """
